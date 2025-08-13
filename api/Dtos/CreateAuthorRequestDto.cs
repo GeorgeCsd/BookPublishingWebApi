@@ -16,6 +16,10 @@ namespace api.Dtos
         [MaxLength(10, ErrorMessage = "Surname cannot be over 10 characters")]
         public String SurName { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Email is required")]
+        [EmailAddress(ErrorMessage = "Invalid email address format")]
+        public string Email { get; set; } = string.Empty;
+
         [Required]
         [Range(5, 50)]
         public int BooksPublished { get; set; }

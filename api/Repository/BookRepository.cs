@@ -38,9 +38,20 @@ namespace api.Repository
         }
 
 
-        public async Task<List<Book>> GetAllAsync()
+        public async Task<List<Book>> GetAllAsync(PagingAndSortingParams parameters)
         {
-            return await dBContext.Books.ToListAsync();
+            var books = dBContext.Books.AsQueryable();
+            if (!string.IsNullOrWhiteSpace(parameters.SortBy))
+            {
+                if (parameters.SortBy.Equals("Title", StringComparison.OrdinalIgnoreCase))
+                {
+                    books = parameters.IsDescending ? books.OrderByDescending(b => b.Title) : books.OrderBy(b => b.Title);
+                }
+            }
+
+            var skipNumber = (parameters.PageNumber - 1) * parameters.PageSize;
+
+            return await books.Skip(skipNumber).Take(parameters.PageSize).ToListAsync();
         }
 
         public async Task<Book?> GetByIdAsync(int id)

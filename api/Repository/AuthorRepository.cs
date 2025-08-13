@@ -44,9 +44,26 @@ namespace api.Repository
             return authorObject;
         }
 
-        public async Task<List<Author>> GetAllAsync()
+        public async Task<List<Author>> GetAllAsync(PagingAndSortingParams parameters)
         {
-            return await dBContext.Authors.Include(b => b.Books).ToListAsync();
+            var authors = dBContext.Authors.Include(a => a.Books).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(parameters.SortBy))
+            {
+                if (parameters.SortBy.Equals("SurName", StringComparison.OrdinalIgnoreCase))
+                {
+                    authors = parameters.IsDescending ? authors.OrderByDescending(a => a.SurName) : authors.OrderBy(a => a.SurName);
+                }
+                
+                else if(parameters.SortBy.Equals("Email", StringComparison.OrdinalIgnoreCase))
+                {
+                    authors = parameters.IsDescending ? authors.OrderByDescending(a => a.Email) : authors.OrderBy(a => a.Email);
+                }
+            }
+            
+            var skipNumber = (parameters.PageNumber - 1) * parameters.PageSize; 
+            
+            return await authors.Skip(skipNumber).Take(parameters.PageSize).ToListAsync();
         }
 
         public async Task<Author?> GetByIdAsync(int id)
@@ -67,7 +84,8 @@ namespace api.Repository
             existingAuthor.SurName = authorDto.SurName;
             existingAuthor.BooksPublished = authorDto.BooksPublished;
             existingAuthor.BirthDate = authorDto.BirthDate;
-
+            existingAuthor.Email = authorDto.Email;
+            
             await dBContext.SaveChangesAsync();
             return existingAuthor;
         }

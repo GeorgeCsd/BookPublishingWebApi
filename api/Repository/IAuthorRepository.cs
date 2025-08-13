@@ -9,7 +9,7 @@ namespace api.Repository
 {
     public interface IAuthorRepository
     {
-        Task<List<Author>> GetAllAsync();
+        Task<List<Author>> GetAllAsync(PagingAndSortingParams parameters);
 
         Task<Author?> GetByIdAsync(int id);
 
