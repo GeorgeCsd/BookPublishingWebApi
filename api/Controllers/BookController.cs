@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using api.Data;
 using api.Dtos;
 using api.Mappers;
+using api.Models;
 using api.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,11 +25,11 @@ namespace api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll([FromQuery] PagingAndSortingParams parameters)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var books = await bookRepo.GetAllAsync();
+            var books = await bookRepo.GetAllAsync(parameters);
 
             var bookDto = books.Select(b => b.ToBookDto());
 
