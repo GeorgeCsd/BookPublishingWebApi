@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace api.Dtos
 {
@@ -28,6 +29,6 @@ namespace api.Dtos
         [DataType(DataType.Date)]
         [Range(typeof(DateOnly), "1900-01-01", "2100-12-31", ErrorMessage = "Birth date must be between 1900 and 2100.")]
         public DateOnly BirthDate { get; set; }
-        
+
     }
 }
